@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "VPCId",
+    "ParameterValue": "vpc-628c6604"
+  },
+  {
+    "ParameterKey": "SubnetID",
+    "ParameterValue": "subnet-d06d7ffd"
+  },
+  {
+    "ParameterKey": "EC2AMIId",
+    "ParameterValue": "ami-28250b52"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "syscolabdev"
+  }
+]

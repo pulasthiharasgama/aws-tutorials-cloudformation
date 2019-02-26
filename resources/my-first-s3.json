@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "My first cloudformation template - S3",
+  "Resources": {
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "my-first-bucket-11-28",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "ExpirationInDays": 2,
+              "Id": "Delete All Files",
+              "Prefix": "temp/",
+              "Status": "Enabled"
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "Dev"
+          }
+        ]
+      }
+    }
+  }
+}

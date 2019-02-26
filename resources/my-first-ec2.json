@@ -1,0 +1,105 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "My first cloudformation template - EC2",
+  "Parameters": {
+    "VPCId": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VPC"
+    },
+    "SubnetID": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "Public Subnet"
+    },
+    "EC2AMIId": {
+      "Type": "String",
+      "Description": "AMI ID of the EC2 Instances"
+    },
+    "KeyPairName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "MSR EC2 Access Key pair"
+    }
+  },
+  "Resources": {
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": {
+          "Ref": "EC2AMIId"
+        },
+        "InstanceType": "t2.micro",
+        "KeyName": {
+          "Ref": "KeyPairName"
+        },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "my-first-ec2"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Dev"
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {
+              "Ref": "SubnetID"
+            },
+            "AssociatePublicIpAddress": "true",
+            "GroupSet": [
+              {
+                "Ref": "EC2SecurityGroup"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "EC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "My EC2 Security Group",
+        "VpcId": {
+          "Ref": "VPCId"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "my-ec2-security-group"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Dev"
+          }
+        ]
+      }
+    },
+    "EC2SGInRule1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "EC2SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "EC2SGOutRule1": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "EC2SecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+  }
+}

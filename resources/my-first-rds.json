@@ -1,0 +1,119 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "My first cloudformation template - EC2",
+  "Parameters": {
+    "VPCId": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "VPC",
+      "Default": "vpc-628c6604"
+    },
+    "SubnetID1": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "Public Subnet 1",
+      "Default": "subnet-d06d7ffd"
+    },
+    "SubnetID2": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "Public Subnet 2",
+      "Default": "subnet-fb4223b2"
+    }
+  },
+  "Resources": {
+    "RDSDatabase": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceIdentifier": "my-first-rds",
+        "AllocatedStorage": "10",
+        "DBInstanceClass": "db.t2.micro",
+        "BackupRetentionPeriod": "0",
+        "Port": "3306",
+        "StorageType": "gp2",
+        "MasterUsername": "TestUser",
+        "MasterUserPassword": "dummyPassword1234",
+        "Engine": "mysql",
+        "EngineVersion": "5.6.40",
+        "PubliclyAccessible": "true",
+        "DBSubnetGroupName": {
+          "Ref": "RDSSubnetGroup"
+        },
+        "VPCSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "Dev"
+          }
+        ]
+      }
+    },
+    "RDSSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "My RDS DB Subnet Group",
+        "SubnetIds": [
+          {
+            "Ref": "SubnetID1"
+          },
+          {
+            "Ref": "SubnetID2"
+          }
+        ]
+      }
+    },
+    "RDSSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "My RDS Security Group",
+        "VpcId": {
+          "Ref": "VPCId"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "my-rds-security-group"
+          },
+          {
+            "Key": "Environment",
+            "Value": "Dev"
+          }
+        ]
+      }
+    },
+    "EC2SGInRule1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "RDSSecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "3306",
+        "ToPort": "3306",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "EC2SGOutRule1": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "RDSSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+  },
+  "Outputs": {
+    "RDSEndpoint": {
+      "Description": "End point of the database",
+      "Value": {
+        "Fn::GetAtt": [
+          "RDSDatabase",
+          "Endpoint.Address"
+        ]
+      }
+    }
+  }
+}
