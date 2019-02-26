@@ -1,7 +1,7 @@
-aws cloudformation create-stack --stack-name my-first-stack-ec2 --template-body file://$PWD/my-first-ec2.json --parameters file://$PWD/ec2-parameters.json --profile tutorial-user
+aws cloudformation create-stack --stack-name my-first-stack-ec2 --template-body file://$PWD/my-first-ec2.json --parameters file://$PWD/parameters/ec2-parameters.json --profile tutorial-user
 aws cloudformation delete-stack --stack-name my-first-stack-ec2 --profile tutorial-user
 
-aws cloudformation create-stack --stack-name my-first-stack-rds --template-body file://$PWD/my-first-rds.json --parameters file://$PWD/rds-parameters.json --profile tutorial-user
+aws cloudformation create-stack --stack-name my-first-stack-rds --template-body file://$PWD/my-first-rds.json --parameters file://$PWD/parameters/rds-parameters.json --profile tutorial-user
 aws cloudformation delete-stack --stack-name my-first-stack-rds --profile tutorial-user
 
 aws cloudformation create-stack --stack-name my-first-stack-s3 --template-body file://$PWD/my-first-s3.json --profile tutorial-user
